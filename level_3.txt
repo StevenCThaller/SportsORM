@@ -1,0 +1,72 @@
+// All teams past and present that Alexander Bailey has played with
+ViewBag.BaileyTeams = context.Teams
+    .Include(t => t.CurrentPlayers)
+    .Include(t => t.AllPlayers)
+    .ThenInclude(pt => pt.PlayerOnTeam)
+    .Where(t => 
+        t.AllPlayers.FirstOrDefault(p => p.PlayerOnTeam.FirstName == "Alexander" && p.PlayerOnTeam.LastName == "Bailey") != null 
+        );  
+        
+
+// All players past and present with the Manitoba Tiger-Cats
+Team tCats = context.Teams.FirstOrDefault(t => t.Location == "Manitoba" && t.TeamName == "Tiger-Cats");
+ViewBag.TigerCats = context.Players
+    .Include(p => p.CurrentTeam)
+    .Include(p => p.AllTeams)
+    .ThenInclude(at => at.TeamOfPlayer)
+    .Where(p => 
+        p.CurrentTeam == tCats ||
+        p.AllTeams.FirstOrDefault(t => t.TeamOfPlayer.Location == "Manitoba" && t.TeamOfPlayer.TeamName == "Tiger-Cats") != null
+        );
+
+// All players formerly (and not currently) with the Wichita Vikings
+Team vikings = context.Teams.FirstOrDefault(t => t.Location == "Wichita" && t.TeamName == "Vikings");
+ViewBag.FormerVikings = context.Players
+    .Include(p => p.CurrentTeam)
+    .Include(p => p.AllTeams)
+    .ThenInclude(at => at.TeamOfPlayer)
+    .Where(p => 
+        p.AllTeams.FirstOrDefault(at => at.TeamOfPlayer.TeamName == "Vikings" && at.TeamOfPlayer.Location == "Wichita") != null 
+        &&
+        p.CurrentTeam != vikings
+        );
+
+// Every team that Emily Sanchez played for before she joined the Indianapolis Athletics --> note the loop in cshtml
+// loops through the ManyToMany entries rather than the Team entries
+
+PlayerTeam EmilyRoyals = context.PlayerTeams
+    .Include(pt => pt.TeamOfPlayer)
+    .Include(pt => pt.PlayerOnTeam)
+    .FirstOrDefault(pt => pt.PlayerOnTeam.FirstName == "Emily" && pt.PlayerOnTeam.LastName == "Sanchez" && pt.TeamOfPlayer.Location == "Indianapolis" && pt.TeamOfPlayer.TeamName == "Athletics");
+    
+ViewBag.PreRoyals = context.Players
+    .Include(p => p.AllTeams)
+    .ThenInclude(at => at.TeamOfPlayer)
+    .FirstOrDefault(p => p.FirstName == "Emily" && p.LastName == "Sanchez")
+    .AllTeams
+    .Where(at => at.PlayerTeamId < EmilyRoyals.PlayerTeamId);
+
+// everyone named Levi who has ever played in the Atlantic Federation of Amateur Baseball Players
+ViewBag.AFABPPlayers = context.Players
+    .Include(p => p.CurrentTeam)
+    .ThenInclude(ct => ct.CurrLeague)
+    .Include(p => p.AllTeams)
+    .ThenInclude(at => at.TeamOfPlayer)
+    .ThenInclude(tp => tp.CurrLeague)
+    .Where(p => 
+        p.FirstName == "Levi"
+        &&
+        (
+            p.AllTeams
+                .Where(at => at.TeamOfPlayer.CurrLeague.Name == "Atlantic Federation of Amateur Baseball Players")
+                .Count() > 0
+            ||
+            p.CurrentTeam.CurrLeague.Name == "Atlantic Federation of Amateur Baseball Players"
+        )
+    );
+
+// all players sorted by the number of teams they've played for
+ViewBag.TNSort = context.Players
+    .Include(p => p.CurrentTeam)
+    .Include(p => p.AllTeams)
+    .OrderByDescending(p => p.AllTeams.Count());

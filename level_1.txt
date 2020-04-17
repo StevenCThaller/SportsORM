@@ -1,0 +1,44 @@
+// All women's leagues
+ViewBag.Women = context.Leagues.Where(l => l.Name.Contains("Women")).ToList();
+
+// All leagues where sport is some type of hockey
+ViewBag.Hockey = context.Leagues.Where(l => l.Sport.Contains("Hockey")).ToList();
+
+// All leagues where sport is something OTHER than football
+ViewBag.NotFootball = context.Leagues.Where(l => l.Sport != "Football").ToList();
+
+// leagues that call themselves conferences
+ViewBag.Conferences = context.Leagues.Where(l => l.Name.ToLower().Contains("conference"));
+
+// leagues in the atlantic region
+ViewBag.Atlantic = context.Leagues.Where(l => l.Name.Contains("Atlantic"));
+
+// teams based in Dallas
+ViewBag.Dallas = context.Teams.Where(t => t.Location == "Dallas");
+
+// teams named the Raptors
+ViewBag.Raptors = context.Teams.Where(t => t.TeamName == "Raptors");
+
+// teams whose location includes "City"
+ViewBag.City = context.Teams.Where(t => t.Location.Contains("City"));
+
+//teams whose names begin with "T"
+ViewBag.TName = context.Teams.Where(t => t.TeamName[0] == 'T');
+
+// all teams ordered alphabetically by location
+ViewBag.LocationAlpha = context.Teams.OrderBy(t => t.Location);
+
+// all teams ordered reverse alpha by team name
+ViewBag.RevAlphName = context.Teams.OrderByDescending(t => t.TeamName);
+
+// players with last name "Cooper"
+ViewBag.Cooper = context.Players.Where(p => p.LastName == "Cooper");
+
+// players with first name "Joshua"
+ViewBag.Joshua = context.Players.Where(p => p.FirstName == "Joshua");
+
+// players with last name cooper EXCEPT for those with first name Joshua
+ViewBag.NotJoshCooper = context.Players.Where(p => p.LastName == "Cooper" && p.FirstName != "Joshua");
+
+// players with first name Alexander OR first name Wyatt
+ViewBag.AlexOrWyatt = context.Players.Where(p => p.FirstName == "Alexander" || p.FirstName == "Wyatt");

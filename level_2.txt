@@ -1,0 +1,44 @@
+// Atlantic Soccer Conference Teams
+ViewBag.AtlanticSoccer = context.Teams
+    .Include(t => t.CurrLeague)
+    .Where(t => t.CurrLeague.Name == "Atlantic Soccer Conference");
+
+// All players on the Boston Penguins
+ViewBag.PenguinsPlayers = context.Players
+    .Include(p => p.CurrentTeam)
+    .Where(p => p.CurrentTeam.TeamName == "Penguins" && p.CurrentTeam.Location == "Boston");
+
+// All teams in the International Collegiate Baseball
+ViewBag.ICBC = context.Teams
+    .Include(t => t.CurrLeague)
+    .Where(t => t.CurrLeague.Name == "International Collegiate Baseball Conference");
+
+// All teams in the American Conference of Amateur Football
+ViewBag.ACAF = context.Teams
+    .Include(t => t.CurrLeague)
+    .Where(t => t.CurrLeague.Name == "American Conference of Amateur Football");
+
+// All football teams
+ViewBag.Football = context.Teams
+    .Include(t => t.CurrLeague)
+    .Where(t => t.CurrLeague.Sport == "Football");
+
+// Teams with a current player named Sophia
+ViewBag.WithSophia = context.Teams
+    .Include(t => t.CurrentPlayers)
+    .Where(t => t.CurrentPlayers.FirstOrDefault(p => p.FirstName == "Sophia") != null);
+
+// Everyone with the last name "Flores" who DOESN'T currently play for the raptors
+ViewBag.FloresNotRaptor = context.Players
+    .Include(p => p.CurrentTeam)
+    .Where(p => p.CurrentTeam.TeamName != "Raptors" && p.LastName == "Flores");
+
+// All current players on the Manitoba Tiger-Cats
+ViewBag.TigerCats = context.Players
+    .Include(p => p.CurrentTeam)
+    .Where(p => p.CurrentTeam.TeamName == "Tiger-Cats" && p.CurrentTeam.Location == "Manitoba");
+
+// All teams that have had 12 or more players
+ViewBag.TwelveOrMore = context.Teams
+    .Include(t => t.AllPlayers)
+    .Where(t => t.AllPlayers.Count >= 12);
